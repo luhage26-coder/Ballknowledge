@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ball Knowledge</title>
+<style>
+:root{--bg:#eceeff;--card:#fff;--tx:#0a0f3a;--mut:#5560a8;--ac:#5b4be0;--acx:#fff;--ok:#16a34a;--bad:#dc2626;--bd:#cdd3f7;--lg1:#0a0f3a;--lg2:#5b4be0;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070b2e;--card:#101a5a;--tx:#f4f6ff;--mut:#9fb0f0;--ac:#8fb4ff;--acx:#0a0f3a;--ok:#22c55e;--bad:#ef4444;--bd:#2f43a8;--lg1:#fff;--lg2:#9fb4ff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#070b2e;--card:#101a5a;--tx:#f4f6ff;--mut:#9fb0f0;--ac:#8fb4ff;--acx:#0a0f3a;--ok:#22c55e;--bad:#ef4444;--bd:#2f43a8;--lg1:#fff;--lg2:#9fb4ff;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(900px 500px at 50% -80px,rgba(124,77,255,.35),transparent 70%),radial-gradient(1.5px 1.5px at 22px 34px,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 88px 96px,rgba(255,255,255,.4),transparent),var(--bg);background-size:auto,120px 120px,120px 120px,auto;color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+#app{max-width:520px;margin:0 auto;padding:16px}
+h1{font-size:30px;line-height:1.1;margin:8px 0 4px;text-align:center}
+h2{font-size:22px;margin:6px 0}
+.sub{text-align:center;color:var(--mut);margin:0 0 18px}
+.card{background:var(--card);box-shadow:0 8px 24px rgba(10,15,80,.22);border:1px solid var(--bd);border-radius:18px;padding:16px;margin:12px 0}
+.tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:700}
+input{width:100%;padding:13px;border-radius:12px;border:2px solid var(--bd);background:var(--bg);color:var(--tx);font-size:17px}
+button{font:inherit;cursor:pointer;color:var(--tx)}
+.btn{width:100%;padding:15px;border-radius:14px;border:0;background:linear-gradient(135deg,#3b6cff,#8a4dff);color:#fff;box-shadow:0 6px 18px rgba(80,70,255,.35);font-weight:800;font-size:17px;margin-top:10px}
+.btn.alt{box-shadow:none;background:transparent;color:var(--tx);border:2px solid var(--bd)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.chip{padding:12px 8px;border-radius:12px;border:2px solid var(--bd);background:var(--bg);font-weight:700}
+.chip.on{border-color:var(--ac);background:var(--card)}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.note{color:var(--mut);font-size:13px;text-align:center;margin-top:10px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pl{display:flex;flex-direction:column;min-width:80px}
+.pl b{font-size:13px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px}
+.pl span{font-size:28px;font-weight:900}
+.pl.r{text-align:right;align-items:flex-end}
+.pn{font-weight:800;color:var(--mut)}
+.bar{height:8px;border-radius:8px;background:var(--bd);overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;width:100%;background:var(--ac)}
+.cl{padding:8px 0;font-size:19px;font-weight:700;transition:opacity .4s}
+.g{display:grid;gap:10px;margin-top:12px}
+.g2{grid-template-columns:1fr 1fr}
+.o{padding:16px 12px;border-radius:14px;border:2px solid var(--bd);background:var(--card);font-weight:700;font-size:17px;text-align:center}
+.o.sel{border-color:var(--ac)}
+.o.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.o.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.o.dim{opacity:.45}
+#msg{text-align:center;min-height:24px;font-weight:800;margin-top:10px}
+.big{font-size:56px;text-align:center;margin:4px 0}
+.code{font-size:44px;font-weight:900;letter-spacing:.2em;text-align:center;color:var(--ac)}
+.err{color:var(--bad);text-align:center;font-weight:700}
+.back{background:none;border:0;color:var(--mut);font-weight:700;font-size:15px;padding:6px 0;margin-bottom:4px}
+.hl{display:grid;gap:4px;margin-top:8px}
+.pc{text-align:center;position:relative;margin:4px 0;overflow:hidden}
+.av{width:84px;height:84px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#fff}
+.val{font-size:28px;font-weight:900;color:var(--ac)}
+.vs{text-align:center;font-weight:900;color:var(--mut);margin:-2px 0}
+.fx{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:90px;animation:fx .9s ease-out forwards;pointer-events:none}
+@keyframes fx{0%{transform:scale(.2);opacity:0}30%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:0}}
+.pop{animation:pop .6s ease}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12);box-shadow:0 0 0 6px rgba(34,197,94,.5)}100%{transform:scale(1)}}
+.shake{animation:shake .5s;border-color:var(--bad)}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.logo{font-size:clamp(42px,13vw,64px);line-height:.92;font-weight:900;text-align:center;letter-spacing:.03em;text-transform:uppercase;background:linear-gradient(180deg,var(--lg1) 20%,var(--lg2) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;margin:6px 0 2px;filter:drop-shadow(0 4px 14px rgba(110,90,255,.55))}
+.logo small{display:block;font-size:.3em;letter-spacing:.3em;font-weight:800;margin-top:8px}
+.mark{width:76px;margin:4px auto 0}
+.mark svg,.me svg,.avb svg,.pa svg{display:block;width:100%;height:auto}
+.avrow{display:flex;gap:10px;align-items:center}
+.me{width:56px;flex:none}
+.avs{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:10px}
+.avb{background:none;border:2px solid transparent;border-radius:50%;padding:2px;line-height:0}
+.avb.on{border-color:var(--ac);box-shadow:0 0 10px var(--ac)}
+.pa{display:inline-flex;align-items:center;gap:8px}
+.pa svg{width:26px;height:26px;flex:none}
+.jw{text-align:center}
+.jsv{width:160px;height:auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}
+.pod{position:relative;overflow:hidden;text-align:center;padding-top:6px}
+.prow{display:flex;justify-content:center;align-items:flex-end;gap:8px;margin:10px 0;min-height:270px}
+.pcol{display:flex;flex-direction:column;align-items:center;width:30%;min-width:96px}
+.pav{width:54px}.pav svg{display:block;width:100%;height:auto}
+.pnm{font-weight:800;margin:4px 0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trophy{font-size:46px;line-height:1.05;height:48px;animation:drop 1.1s cubic-bezier(.2,.9,.3,1.3) .7s both,glow 1.6s ease-in-out 2s infinite}
+.step{width:100%;border-radius:12px 12px 0 0;background:linear-gradient(180deg,#8a4dff,#3b6cff);display:flex;flex-direction:column;align-items:center;justify-content:center;transform-origin:bottom;animation:rise .9s ease-out both}
+.step b{font-size:34px;font-weight:900;color:#fff}
+.step small{color:#dfe6ff;font-weight:700}
+.step.g{background:linear-gradient(180deg,#ffd54a,#f5a300)}
+.step.g b,.step.g small{color:#3a2a00}
+.step.e{background:var(--bd);opacity:.5}
+@keyframes rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes drop{0%{transform:translateY(-230px) scale(.3) rotate(-25deg);opacity:0}70%{opacity:1}100%{transform:none;opacity:1}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 4px #ffd54a)}50%{filter:drop-shadow(0 0 16px #ffd54a)}}
+.cf{position:absolute;top:-10px;font-style:normal;font-size:22px;animation:fall 2.8s ease-in infinite;pointer-events:none}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0);opacity:0}15%{opacity:1}100%{transform:translateY(440px) rotate(300deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script>
+const app=document.getElementById("app");
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const shuf=(a,r)=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+const W=[
+["Ich bin Torwart.|Ich wurde 2014 Weltmeister.|Seit 2011 stehe ich im Tor des FC Bayern.",["Manuel Neuer","Marc-André ter Stegen","Oliver Kahn","Kevin Trapp"],0],
+["Ich bin Rekordtorschütze bei Weltmeisterschaften.|Ich schoss 16 WM-Tore.|Ich wurde 2014 Weltmeister.",["Thomas Müller","Lukas Podolski","Miroslav Klose","Mario Gomez"],2],
+["Ich wurde in Rosario geboren.|Ich wurde 2022 Weltmeister.|Ich habe 8-mal den Ballon d’Or gewonnen.",["Cristiano Ronaldo","Neymar","Kylian Mbappé","Lionel Messi"],3],
+["Ich wurde 2010 WM-Torschützenkönig.|Man nennt mich „Raumdeuter“.|Ich bin beim FC Bayern groß geworden.",["Thomas Müller","Mario Götze","Toni Kroos","Marco Reus"],0],
+["Ich komme von Madeira.|Ich habe 5-mal die Champions League gewonnen.|Mein Jubel ist weltbekannt: „Siuuu!“",["Luís Figo","Cristiano Ronaldo","Rui Costa","Bruno Fernandes"],1],
+["Ich wurde 2018 mit 19 Jahren Weltmeister.|Im WM-Finale 2022 schoss ich einen Hattrick.|2024 wechselte ich zu Real Madrid.",["Erling Haaland","Antoine Griezmann","Ousmane Dembélé","Kylian Mbappé"],3],
+["Ich bin Norweger.|Mein Vater spielte Profi in England.|Ich spielte für Dortmund und Manchester City.",["Erling Haaland","Martin Ødegaard","Robert Lewandowski","Alexander Sørloth"],0],
+["Ich wurde in Stuttgart geboren.|In der Jugend spielte ich beim FC Chelsea.|Ich entschied mich für Deutschland statt England.",["Florian Wirtz","Jamal Musiala","Kai Havertz","Serge Gnabry"],1]
+];
+const T=[
+["Deutschland ist 4-facher Fußball-Weltmeister.",0],
+["Der FC Bayern München wurde in Hamburg gegründet.",1],
+["Brasilien hat die meisten WM-Titel.",0],
+["Ein reguläres Fußballspiel dauert 80 Minuten.",1],
+["Das Wembley-Tor gab es im WM-Finale 1966.",0],
+["Miroslav Klose hat mehr WM-Tore als Ronaldo (Nazário).",0],
+["Borussia Dortmund wurde noch nie Deutscher Meister.",1],
+["Italien gewann die EM 2021.",0],
+["Messi hat noch nie ein WM-Tor geschossen.",1],
+["Spanien wurde 2010 Weltmeister.",0]
+];
+const ST=[
+["Signal Iduna Park",["FC Schalke 04","Borussia Dortmund","VfL Bochum","Werder Bremen"],1],
+["Anfield",["FC Liverpool","FC Everton","Manchester United","Leeds United"],0],
+["Santiago Bernabéu",["Atlético Madrid","FC Barcelona","Real Madrid","FC Sevilla"],2],
+["Old Trafford",["Manchester City","Manchester United","FC Chelsea","FC Arsenal"],1],
+["Weserstadion",["Hamburger SV","Hannover 96","Eintracht Frankfurt","Werder Bremen"],3],
+["Millerntor-Stadion",["FC St. Pauli","Hamburger SV","Holstein Kiel","Hansa Rostock"],0],
+["BayArena",["Bayer Leverkusen","1. FC Köln","Fortuna Düsseldorf","Borussia M’gladbach"],0],
+["Veltins-Arena",["FC Schalke 04","VfL Wolfsburg","MSV Duisburg","Borussia Dortmund"],0]
+];
+const CP=[
+["Znicz Pruszków → Lech Posen|→ Borussia Dortmund|→ FC Bayern → FC Barcelona",["Robert Lewandowski","Arkadiusz Milik","Wojciech Szczęsny","Piotr Zieliński"],0],
+["FC Santos → FC Barcelona|→ Paris Saint-Germain|→ Al-Hilal → FC Santos",["Vinícius Júnior","Neymar","Philippe Coutinho","Dani Alves"],1],
+["FC Bayern → Bayer Leverkusen (Leihe)|→ FC Bayern|→ Real Madrid",["Toni Kroos","Thomas Müller","Sami Khedira","Mario Götze"],0],
+["FC Schalke 04 → Werder Bremen|→ Real Madrid|→ FC Arsenal → Fenerbahçe",["Mesut Özil","İlkay Gündoğan","Julian Draxler","Leroy Sané"],0],
+["Malmö FF → Ajax|→ Juventus → Inter|→ FC Barcelona → AC Milan → PSG → Man United",["Henrik Larsson","Zlatan Ibrahimović","Alexander Isak","Erling Haaland"],1],
+["Sporting Lissabon → Manchester United|→ Real Madrid|→ Juventus → Al-Nassr",["Luís Figo","Nani","João Félix","Cristiano Ronaldo"],3],
+["Bayer Leverkusen|→ FC Chelsea|→ FC Arsenal",["Kai Havertz","Timo Werner","Serge Gnabry","Leroy Sané"],0],
+["FC Bayern → Borussia Dortmund|→ FC Bayern → Borussia Dortmund|→ AS Rom",["Jérôme Boateng","Niklas Süle","Mats Hummels","Matthias Ginter"],2]
+];
+const HL=[
+["Lamine Yamal","FC Barcelona",220],["Erling Haaland","Manchester City",200],["Kylian Mbappé","Real Madrid",180],["Michael Olise","FC Bayern",150],
+["Jude Bellingham","Real Madrid",130],["Pedri","FC Barcelona",150],["Vitinha","Paris Saint-Germain",140],["João Neves","Paris Saint-Germain",140],
+["Khvicha Kvaratskhelia","Paris Saint-Germain",140],["Vinícius Júnior","Real Madrid",140],["Declan Rice","FC Arsenal",120],["Enzo Fernández","Manchester City",90],
+["Elliot Anderson","Manchester City",75],["Morgan Rogers","FC Chelsea",90],["Yan Diomande","Real Madrid",120],["Fermín López","",110],
+["Arda Güler","Real Madrid",100],["Aleksandar Pavlović","FC Bayern",90],["Florian Wirtz","FC Liverpool",85],["Jamal Musiala","FC Bayern",80],
+["Felix Nmecha","",65],["Antonio Nusa","",45],
+["Strahinja Pavlović","",40],["Xavi Simons","",40],["Bart Verbruggen","",40],["Gonçalo Inácio","",40],["Álex Baena","",40],["Jamie Leweling","",40],["Folarin Balogun","",40],["Karim Adeyemi","",40],
+["Pape Gueye","",40],["Josip Stanišić","",40],["Lisandro Martínez","",40],["Nico González","",40],["Eric García","",40],["Christos Tzolis","",40],["Jørgen Strand Larsen","",40],
+["Rayan Cherki","",90],["Federico Valverde","",90],["Lautaro Martínez","",85],["Alexander Isak","",85],["Estêvão","",80],["Pau Cubarsí","FC Barcelona",80],
+["Nico Paz","",80],["Warren Zaïre-Emery","",80],["Hugo Ekitiké","",80],["Willian Pacho","",80],["João Pedro","",80],["Nuno Mendes","",80],["Antoine Semenyo","",80],
+["Ryan Gravenberch","",80],["Achraf Hakimi","",80],["Sandro Tonali","",80],["Kenan Yıldız","",75],["Benjamin Šeško","",75],
+["Marc Guéhi","",70],["Dayot Upamecano","",70],["Dean Huijsen","",65],["Igor Thiago","",65],["Anthony Gordon","",65],["Eberechi Eze","",65],["Jules Koundé","",65],
+["Viktor Gyökeres","",65],["Martin Ødegaard","",65],["Johan Manzambi","",50],["Victor Froholdt","",50],["Leny Yoro","",50],["Mateus Fernandes","",50],["Alex Scott","",50],
+["Matheus Cunha","",75],["Jérémy Doku","",75],["Gabriel","",75],["Martín Zubimendi","",75],["Aurélien Tchouaméni","",75],["Bryan Mbeumo","",75],["Victor Osimhen","",75],
+["Junior Kroupi","",70],["Kobbie Mainoo","",70],["Adam Wharton","",70],["Nico O’Reilly","",70],["Bradley Barcola","",70],["Phil Foden","",70],
+["Maghnes Akliouche","",50],["Nico Williams","",50],["Piero Hincapié","",50],["Eduardo Camavinga","",50],["Manu Koné","",50],["Castello Lukeba","",50],["Levi Colwill","",50],["Matheus Nunes","",50],
+["Micky van de Ven","",50],["Mohammed Kudus","",50],["Noni Madueke","",50],["Tijjani Reijnders","",50],["Omar Marmoush","",50],["Yann Bisseck","",50],["Maxence Lacroix","",50]
+];
+const JK=[
+["Real Madrid",1998,"#ffffff","#2a3a6a","f","w"],["FC Barcelona",1992,"#a50044","#004d98","s","bg"],["FC Bayern",2001,"#dc052d","#ffffff","f","r"],["Borussia Dortmund",1997,"#fde100","#000000","f","y"],
+["Manchester United",1994,"#da291c","#000000","f","r"],["FC Liverpool",2005,"#c8102e","#ffffff","f","r"],["Juventus",1996,"#ffffff","#000000","s","jv"],["AC Mailand",1994,"#d4001f","#000000","s","mi"],
+["Inter Mailand",1998,"#0057b8","#000000","s","in"],["Manchester City",2012,"#6cabdd","#ffffff","f","sk"],["SSC Neapel",1990,"#12a0d7","#ffffff","f","sk"],["FC Chelsea",2005,"#034694","#ffffff","f","bl"],
+["Paris Saint-Germain",1995,"#0a1e5a","#e30613","c","ps"],["Ajax Amsterdam",1995,"#ffffff","#d2122e","c","aj"],["Celtic Glasgow",2003,"#ffffff","#12803c","h","ce"],["Atlético Madrid",1996,"#ffffff","#cb3524","s","at"],
+["FC Arsenal",1998,"#ef0107","#ffffff","m","ar"],["Galatasaray",2000,"#fdb913","#a90432","q","ga"],["AC Florenz",1999,"#5b2a86","#ffffff","f","pu"],["AS Rom",2001,"#8c1d2f","#f0bc42","f","ma"],
+["FC Porto",2004,"#ffffff","#0033a0","s","po"],["Benfica Lissabon",1991,"#e30613","#ffffff","f","r"]
+];
+const BODY="M35 12 L50 8 Q60 18 70 8 L85 12 L112 34 L98 52 L88 44 L88 108 L32 108 L32 44 L22 52 L8 34 Z";
+function jersey(k){
+  let x="";
+  if(k.p==="s")for(let i=0;i<8;i++)x+=`<rect x="${6+i*14}" y="0" width="7" height="120" fill="${k.b}"/>`;
+  else if(k.p==="h")for(let i=0;i<7;i++)x+=`<rect x="0" y="${12+i*16}" width="120" height="8" fill="${k.b}"/>`;
+  else if(k.p==="c")x=`<rect x="50" y="0" width="20" height="120" fill="${k.b}"/>`;
+  else if(k.p==="q")x=`<rect x="60" y="0" width="60" height="120" fill="${k.b}"/>`;
+  else if(k.p==="m")x=`<polygon points="35,12 8,34 22,52 32,44" fill="${k.b}"/><polygon points="85,12 112,34 98,52 88,44" fill="${k.b}"/>`;
+  return `<svg class="jsv" viewBox="0 0 120 116" aria-hidden="true"><defs><clipPath id="jb"><path d="${BODY}"/></clipPath></defs><g clip-path="url(#jb)"><rect width="120" height="116" fill="${k.a}"/>${x}</g><path d="${BODY}" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="2"/><path d="M50 8 Q60 18 70 8" fill="none" stroke="${k.b||"#000"}" stroke-width="3"/></svg>`;
+}
+const AVC=["#3b82f6","#a855f7","#ec4899","#ef4444","#f97316","#facc15","#22c55e","#22d3ee"];
+const ball=c=>`<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="${c}" stroke="#fff" stroke-width="2"/><polygon points="20,12 27,17 24.5,25.5 15.5,25.5 13,17" fill="#fff" opacity=".92"/><path d="M20 12V3M27 17l8-3M24.5 25.5l5 7M15.5 25.5l-5 7M13 17l-8-3" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/></svg>`;
+const oppAv=()=>{const o=opp(),v=o&&o.presence.v;return ball(AVC[typeof v==="number"&&AVC[v]?v:0])};
+const TQ=["Nenne einen Spieler mit der Rückennummer 10.","Nenne einen Weltklasse-Torwart.","Nenne einen Bundesliga-Verein.","Nenne einen Weltmeister von 2014.","Nenne den besten Stürmer der Welt.","Nenne ein Land, das die WM gewonnen hat.","Nenne einen Trainer.","Nenne einen Spieler von Real Madrid.","Nenne einen Premier-League-Verein.","Nenne einen Spieler mit der Rückennummer 7.","Nenne ein Fußballstadion.","Nenne einen Spieler vom FC Bayern.","Nenne einen guten Elfmeterschützen.","Nenne ein junges Talent unter 20.","Nenne ein südamerikanisches Fußball-Land.","Nenne einen Ballon-d’Or-Gewinner.","Nenne einen Spieler vom FC Barcelona.","Nenne einen Abwehrspieler.","Nenne einen schnellen Fußballer.","Nenne einen Verein aus Italien.","Nenne einen tätowierten Fußballer.","Nenne einen Champions-League-Sieger.","Nenne einen Ex-Spieler von Borussia Dortmund.","Nenne einen deutschen Nationalspieler.","Nenne den besten Fußballer aller Zeiten."];
+const MODES={g:["🧠","Telepathie (nur online)"],h:["📈","Higher/Lower"],j:["👕","Retro-Trikots"],c:["🧭","Karriere-Pfad"],w:["🕵️","Wer bin ich?"],t:["✅","Wahr oder Falsch"],s:["🏟️","Stadion-Quiz"],x:["🎲","Quiz-Mix"]};
+const N=8,SEC=15;
+
+function pick(mode,seed){
+  const r=mul(seed);
+  const mk=(k)=>{
+    if(k==="j")return JK.map(([t,y,a,b,p,g])=>{const ot=[],seen=new Set([t]);for(const z of shuf(JK.filter(z=>z[5]!==g),r)){if(!seen.has(z[0])){seen.add(z[0]);ot.push(z[0]);if(ot.length===3)break}}const op=[t,...ot],ix=shuf([0,1,2,3],r);return{m:"j",tag:"Welcher Klub trägt dieses Retro-Trikot?",y,a,b,p,o:ix.map(i=>op[i]),c:ix.indexOf(0)}});
+    if(k==="t")return T.map(([q,c])=>({m:"t",tag:"Wahr oder falsch?",q,o:["Wahr","Falsch"],c}));
+    const src=k==="w"?W:k==="c"?CP:ST;
+    return src.map(([q,o,c])=>{
+      const ix=shuf([0,1,2,3],r);
+      const it={m:k,tag:k==="w"?"Wer bin ich?":k==="c"?"Wessen Karriere ist das?":"Welcher Verein spielt hier?",o:ix.map(i=>o[i]),c:ix.indexOf(c)};
+      if(k==="w"||k==="c")it.t=q.split("|");else it.q=q;
+      return it;
+    });
+  };
+  const pool=mode==="x"?[].concat(mk("w"),mk("t"),mk("s"),mk("c")):mk(mode);
+  return shuf(pool,r).slice(0,mode==="j"?15:N);
+}
+
+const S={name:"",mode:"x",view:"home",online:false,host:false,code:"",codeIn:"",run:0,qs:[],qi:0,ans:[],pts:[],score:0,left:SEC,lock:false,rev:false,t0:0,err:""};
+let R=null,RM=null,tm=null;
+try{S.name=localStorage.getItem("fqn")||""}catch(e){}
+try{S.av=+localStorage.getItem("fqav")||0}catch(e){S.av=0}
+/* Raum-System ueber einen oeffentlichen MQTT-Broker (funktioniert auf jedem Hoster, ohne Konto) */
+const roomApi={
+  join(name,host){
+    return new Promise((resolve,reject)=>{
+      if(typeof mqtt==="undefined"){reject(new Error("Bibliothek nicht geladen"));return}
+      const myId=Math.random().toString(36).slice(2,10);
+      const base="ballknowledge26/"+name+"/";
+      const me={isMe:true,kind:"viewer",presence:{}};
+      const others={};
+      const URLS=["wss://broker.hivemq.com:8884/mqtt","wss://broker.emqx.io:8084/mqtt"];
+      let cbs=[],done=false,cl=null,connected=false,timer=null,idx=0,joinTimer=null;
+      const fire=()=>cbs.forEach(f=>{try{f()}catch(e){console.error(e)}});
+      const pub=()=>{try{if(cl)cl.publish(base+myId,JSON.stringify(me.presence),{retain:true,qos:1})}catch(e){}};
+      const api={
+        peers(){return [me].concat(Object.values(others))},
+        onPeers(f){cbs.push(f)},
+        presence(o){Object.assign(me.presence,o);pub();return Promise.resolve()},
+        leave(){
+          cbs=[];
+          const c=cl;cl=null;
+          try{c.publish(base+myId,"",{retain:true,qos:1},()=>{try{c.end(true)}catch(e){}});setTimeout(()=>{try{c.end(true)}catch(e){}},800)}catch(e){}
+          return Promise.resolve();
+        }
+      };
+      const fail=m=>{
+        if(done)return;done=true;clearTimeout(timer);clearTimeout(joinTimer);
+        try{cl&&cl.end(true)}catch(e){}cl=null;reject(new Error(m));
+      };
+      const ok=()=>{if(done)return;done=true;clearTimeout(timer);clearTimeout(joinTimer);resolve(api)};
+      const connect=()=>{
+        if(done)return;
+        if(idx>=URLS.length){fail("Server nicht erreichbar");return}
+        const url=URLS[idx++];
+        connected=false;
+        const c=mqtt.connect(url,{clientId:"bk_"+myId+"_"+idx,clean:true,connectTimeout:6000,reconnectPeriod:2000,
+          will:{topic:base+myId,payload:"",retain:true,qos:1}});
+        cl=c;
+        const nextServer=()=>{
+          if(done||connected||cl!==c)return;
+          try{c.end(true)}catch(e){}cl=null;connect();
+        };
+        const t=setTimeout(nextServer,7000);
+        c.on("error",()=>{clearTimeout(t);nextServer()});
+        c.on("connect",()=>{
+          clearTimeout(t);connected=true;
+          c.subscribe(base+"+",{qos:1},err=>{
+            if(err){fail("Abo fehlgeschlagen");return}
+            if(Object.keys(me.presence).length)pub();
+            if(host)ok();
+            else if(!done&&!joinTimer)joinTimer=setTimeout(()=>fail("Code nicht gefunden"),6000);
+          });
+        });
+        c.on("message",(topic,payload)=>{
+          const id=topic.slice(base.length);
+          if(id===myId)return;
+          const txt=payload.toString();
+          if(!txt){if(others[id]){delete others[id];fire()}return}
+          let p;try{p=JSON.parse(txt)}catch(e){return}
+          others[id]={isMe:false,kind:"viewer",presence:p};
+          if(!host)ok();
+          fire();
+        });
+      };
+      timer=setTimeout(()=>fail("Zeitüberschreitung"),25000);
+      connect();
+    });
+  }
+};
+R=typeof mqtt!=="undefined"?roomApi:null;
+
+const peers=()=>RM?RM.peers().filter(p=>p.kind==="viewer"):[];
+const opp=()=>peers().find(p=>!p.isMe)||null;
+const hostPeer=()=>peers().find(p=>!p.isMe&&p.presence.h===1)||null;
+const oppName=()=>{const o=opp();return o&&o.presence.n?o.presence.n:"Gegner"};
+const push=()=>{if(RM)RM.presence({s:S.score,a:S.ans}).catch(()=>{})};
+
+function chips(){return '<div class="chips">'+Object.entries(MODES).map(([k,v])=>`<button class="chip${S.mode===k?" on":""}" data-a="mode" data-m="${k}">${v[0]} ${v[1]}</button>`).join("")+"</div>"}
+
+function home(){
+  return `<div class="mark">${ball(AVC[S.av]||AVC[0])}</div><div class="logo">Ball<br>Knowledge<small>Das Fußball-Quiz-Duell</small></div><p class="sub">Schnell antworten, mehr Punkte. Allein oder gegen deinen Freund.</p>
+  <div class="card"><div class="tag">Dein Name &amp; Avatar</div><div class="avrow"><div class="me">${ball(AVC[S.av]||AVC[0])}</div><input id="nm" maxlength="14" placeholder="z. B. Kicker99" value="${esc(S.name)}"></div><div class="avs">${AVC.map((c,i)=>`<button class="avb${S.av===i?" on":""}" data-a="av" data-i="${i}" aria-label="Avatar ${i+1}">${ball(c)}</button>`).join("")}</div>
+  <div class="tag" style="margin-top:14px">Quiz wählen</div>${chips()}
+  <button class="btn" data-a="solo">Solo spielen</button></div>
+  <div class="card"><div class="tag">Online gegen einen Freund</div>
+  <button class="btn alt" data-a="create"${R?"":" disabled"}>Raum erstellen</button>
+  <div class="row" style="margin-top:10px"><input id="cd" maxlength="4" placeholder="Code" value="${esc(S.codeIn)}" style="text-transform:uppercase"><button class="btn alt" style="margin-top:0" data-a="join"${R?"":" disabled"}>Beitreten</button></div>
+  ${S.err?`<p class="err">${esc(S.err)}</p>`:""}
+  ${R?"":'<p class="note">Online-Duelle sind hier gerade nicht verfügbar. Solo geht immer.</p>'}</div>`;
+}
+
+function lobby(){
+  const o=opp(),h=hostPeer(),mode=S.host?S.mode:(h&&h.presence.mode)||S.mode;
+  return `<h1>Raum-Code</h1><div class="code">${esc(S.code.toUpperCase())}</div>
+  <p class="sub">${S.host?"Dein Freund öffnet dieselbe Seite und gibt den Code ein.":"Du bist im Raum."}</p>
+  <div class="card"><div class="tag">Spieler</div><p class="pa">${ball(AVC[S.av]||AVC[0])} ${esc(S.name||"Spieler")} (du)</p>
+  <p class="pa">${o?oppAv()+" "+esc(oppName()):"⏳ Warte auf Freund …"}</p></div>
+  ${S.host?`<div class="card"><div class="tag">Quiz wählen</div>${chips()}<button class="btn" data-a="start"${o?"":" disabled"}>Spiel starten</button></div>`
+  :`<div class="card"><div class="tag">Quiz</div><p>${MODES[mode][0]} ${MODES[mode][1]}</p><p class="note">${h?"Der Host startet gleich das Spiel.":"Warte auf den Host …"}</p></div>`}
+  <button class="btn alt" data-a="menu">Verlassen</button>`;
+}
+
+function result(){return podium();
+  const o=opp(),os=o?(o.presence.s||0):0,done=o?o.presence.d===1:true;
+  let t="Dein Ergebnis",e="⚽";
+  if(S.online&&o){ if(done){ if(S.score>os){t="Du gewinnst!";e="🏆"} else if(S.score<os){t=esc(oppName())+" gewinnt";e="😤"} else {t="Unentschieden";e="🤝"} } else {t="Gegner spielt noch …";e="⏳"} }
+  if(S.mode==="g"){t=S.score+" von "+S.qs.length+" Treffern";e=S.score>=15?"🧠":S.score>=8?"🤝":"🌀"}
+  const right=S.ans.filter((a,i)=>a===S.qs[i].c).length;
+  return `<div class="big">${e}</div><h1>${t}</h1>
+  <div class="card"><div class="top"><div class="pl"><b class="pa">${ball(AVC[S.av]||AVC[0])}Du</b><span>${S.score}</span></div>${S.online&&o?`<div class="pl r"><b class="pa">${oppAv()}${esc(oppName())}</b><span>${os}</span></div>`:""}</div>
+  ${S.mode==="g"?"<p class=\"note\">Team-Ergebnis: so oft habt ihr dasselbe geschrieben</p>":S.mode==="h"?"<p class=\"note\">Streak · Rekord: "+hlRec()+"</p>":S.mode==="p"?"<p class=\"note\">Tore im Elfmeter-Duell</p>":`<p class="note">${right} von ${S.qs.length} richtig</p>`}</div>
+  ${!S.online||S.host?'<button class="btn" data-a="again">Nochmal spielen</button>':'<p class="note">Der Host startet die nächste Runde.</p>'}
+  <button class="btn alt" data-a="menu">Zum Menü</button>`;
+}
+
+function paint(){
+  if(S.view==="game")return paintGame();if(S.view==="pen")return paintPen();if(S.view==="hl")return paintHL();if(S.view==="tel")return paintTel();
+  app.innerHTML=S.view==="home"?home():S.view==="lobby"?lobby():result();if(S.view==="result")podiumAnim();
+}
+
+function paintGame(){
+  const q=S.qs[S.qi],my=S.ans[S.qi],o=S.online?opp():null;
+  const body=q.m==="j"?`<div class="jw">${jersey(q)}<h2>${q.y}</h2></div>`:(q.m==="w"||q.m==="c")?q.t.map((c,i)=>`<div class="cl" style="opacity:${S.rev||i===0?1:0}">💡 ${esc(c)}</div>`).join(""):`<h2>${esc(q.q)}</h2>`;
+  const opts=q.o.map((t,i)=>{let c="o";if(S.rev)c+=i===q.c?" ok":i===my?" bad":" dim";else if(S.lock&&i===my)c+=" sel";return `<button class="${c}" data-a="opt" data-i="${i}">${esc(t)}</button>`}).join("");
+  let msg="";
+  if(S.rev)msg=S.ans[S.qi]===q.c?`✅ +${S.pts[S.qi]}`:(S.ans[S.qi]===-1?"⏱️ Zeit abgelaufen":"❌ Leider falsch");
+  else if(S.lock)msg=S.online&&o?"Warte auf "+esc(oppName())+" …":"";
+  app.innerHTML=`<button class="back" data-a="menu">← Menü</button><div class="top"><div class="pl"><b>Du</b><span id="s0">${S.score}</span></div><div class="pn">${S.qi+1}/${S.qs.length}</div>${S.online?`<div class="pl r"><b>${esc(oppName())}</b><span id="s1">${o?(o.presence.s||0):0}</span></div>`:""}</div>
+  <div class="bar"><i id="bar"></i></div>
+  <div class="card"><div class="tag">${q.tag}</div>${body}</div>
+  <div class="g${q.m==="t"?" g2":""}">${opts}</div><div id="msg">${msg}</div>`;
+  tick();
+}
+
+function paintScores(){
+  const o=opp(),a=document.getElementById("s1");
+  if(a)a.textContent=o?(o.presence.s||0):0;
+  if(S.lock&&!S.rev){const m=document.getElementById("msg");if(m&&S.online&&o)m.textContent=((o.presence.a||[]).length>S.qi)?"":"Warte auf "+oppName()+" …"}
+}
+
+function tick(){
+  if(S.view!=="game"||S.rev)return;
+  const el=(Date.now()-S.t0)/1000;
+  S.left=Math.max(0,SEC-el);
+  const b=document.getElementById("bar");if(b)b.style.width=(S.left/SEC*100)+"%";
+  const n=1+Math.floor(el/5);
+  document.querySelectorAll(".cl").forEach((e,i)=>{e.style.opacity=i<n?1:0});
+  if(S.left<=0){
+    if(S.ans[S.qi]===undefined){S.ans[S.qi]=-1;S.pts[S.qi]=0;push()}
+    S.lock=true;reveal();
+  }
+}
+
+function startQ(){
+  S.lock=false;S.rev=false;S.t0=Date.now();
+  clearInterval(tm);tm=setInterval(tick,100);
+  paintGame();
+}
+
+function startGame(mode,seed,run){
+  S.mode=mode;S.run=run;S.qs=mode==="p"||mode==="h"?[]:mode==="g"?shuf(TQ,mul(seed)):pick(mode,seed);S.qi=0;S.ans=[];S.pts=[];S.score=0;S.pc=[];S.cpu=[];S.view=mode==="p"?"pen":mode==="h"?"hl":mode==="g"?"tel":"game";
+  if(RM)RM.presence({s:0,a:[],pc:[],ta:[],tt:[],d:0}).catch(()=>{});if(mode==="p"){startPen();return}if(mode==="h"){startHL();return}if(mode==="g"){startTel();return}
+  startQ();
+}
+
+function choose(i){
+  if(S.lock||S.rev)return;
+  S.lock=true;S.ans[S.qi]=i;
+  const ok=i===S.qs[S.qi].c,p=ok?(S.mode==="j"?1:100+Math.round(S.left/SEC*50)):0;
+  S.pts[S.qi]=p;S.score+=p;push();
+  paintGame();checkReveal();
+}
+
+function checkReveal(){
+  if(S.rev||!S.lock||S.view!=="game")return;
+  const o=S.online?opp():null;
+  if(!o||(o.presence.a||[]).length>S.qi)reveal();
+}
+
+function reveal(){
+  if(S.rev)return;
+  S.rev=true;paintGame();
+  const q=S.qi;
+  setTimeout(()=>{if(S.view!=="game"||S.qi!==q)return;next()},2300);
+}
+
+function next(){
+  S.qi++;
+  if(S.qi>=S.qs.length){
+    clearInterval(tm);S.view="result";
+    if(RM)RM.presence({d:1}).catch(()=>{});
+    paint();
+  }else startQ();
+}
+
+const DIR=["⬅️ Links","⬆️ Mitte","➡️ Rechts"];
+const hostSide=()=>S.host||!S.online;
+function tallies(){
+  const o=S.online?opp():null,th=o?(o.presence.pc||[]):S.cpu,mine=S.pc;
+  const H=hostSide()?mine:th,G=hostSide()?th:mine;
+  let h=0,g=0,done=0;
+  for(let r=0;r<10;r++){
+    if(H[r]===undefined||G[r]===undefined)break;
+    done=r+1;
+    if(r%2===0){if(H[r]!==G[r])h++}else{if(G[r]!==H[r])g++}
+  }
+  return {h,g,done,H,G};
+}
+function startPen(){S.pr=0;S.prev=false;S.t0=Date.now();clearInterval(tm);tm=setInterval(penTick,250);paintPen()}
+function penTick(){
+  if(S.view!=="pen"||S.prev)return;
+  if(S.pc[S.pr]===undefined&&Date.now()-S.t0>9000)penPick(Math.floor(Math.random()*3));
+}
+function penPick(d){
+  if(S.view!=="pen"||S.prev||S.pc[S.pr]!==undefined)return;
+  S.pc[S.pr]=d;
+  if(!S.online||!opp())S.cpu[S.pr]=Math.floor(Math.random()*3);
+  if(RM)RM.presence({pc:S.pc}).catch(()=>{});
+  paintPen();penCheck();
+}
+function penCheck(){
+  if(S.view!=="pen"||S.prev)return;
+  if(tallies().done>S.pr){S.prev=true;paintPen();setTimeout(penNext,2200)}
+}
+function penNext(){
+  if(S.view!=="pen")return;
+  S.pr++;
+  if(S.pr>=10){
+    const t=tallies();S.score=hostSide()?t.h:t.g;
+    clearInterval(tm);S.view="result";
+    if(RM)RM.presence({s:S.score,d:1}).catch(()=>{});
+    paint();return;
+  }
+  S.prev=false;S.t0=Date.now();paintPen();
+}
+function paintPen(){
+  const t=tallies(),r=S.pr,sh=(r%2===0)===hostSide(),me=hostSide()?t.h:t.g,th=hostSide()?t.g:t.h,my=S.pc[r];
+  let body;
+  if(S.prev){
+    const shot=r%2===0?t.H[r]:t.G[r],key=r%2===0?t.G[r]:t.H[r],goal=shot!==key;
+    body=`<div class="big">${goal?"⚽":"🧤"}</div><h2 style="text-align:center">${goal?(sh?"TOOOR!":"Gegentor!"):(sh?"Gehalten!":"Parade!")}</h2><p class="note">Schuss: ${DIR[shot]} · Torwart: ${DIR[key]}</p>`;
+  }else{
+    body=`<h2 style="text-align:center">${sh?"🦵 Du schießt!":"🧤 Du bist im Tor!"}</h2><p class="note">${sh?"Wohin schießt du?":"Wohin springst du?"}</p><div class="g">${DIR.map((d,i)=>`<button class="o${my===i?" sel":""}" data-a="pen" data-i="${i}"${my===undefined?"":" disabled"}>${d}</button>`).join("")}</div><div id="msg">${my===undefined?"":(S.online&&opp()?"Warte auf "+esc(oppName())+" …":"")}</div>`;
+  }
+  app.innerHTML=`<button class="back" data-a="menu">← Menü</button><div class="top"><div class="pl"><b>Du</b><span>${me}</span></div><div class="pn">Schuss ${r+1}/10</div><div class="pl r"><b>${S.online?esc(oppName()):"Computer"}</b><span>${th}</span></div></div><div class="card">${body}</div>`;
+}
+const hlRec=()=>{try{return +localStorage.getItem("fqrec")||0}catch(e){return 0}};
+const fmt=v=>v.toLocaleString("de-DE")+" Mio. €";
+const av=p=>{const h=[...p[0]].reduce((a,c)=>a+c.charCodeAt(0),0)*37%360,ini=p[0].split(" ").map(w=>w[0]).slice(0,2).join("");return `<div class="av" style="background:linear-gradient(135deg,hsl(${h} 65% 45%),hsl(${(h+50)%360} 65% 30%))">${esc(ini)}</div>`};
+function hlSeq(seed){const r=mul(seed),a=[];let prev=-1;while(a.length<60){const i=Math.floor(r()*HL.length);if(i===prev||(prev>=0&&HL[i][2]===HL[prev][2]))continue;a.push(i);prev=i}return a}
+function startHL(){S.hs=hlSeq(S.run?S.run%100000:Date.now()%100000);S.hi=0;S.hst="ask";S.score=0;paintHL()}
+function countUp(v){const e=document.getElementById("rv"),t0=performance.now();const f=t=>{if(!e||!e.isConnected)return;const k=Math.min(1,(t-t0)/700);e.textContent=fmt(Math.round(v*k*(2-k)));if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+function paintHL(){
+  const L=HL[S.hs[S.hi]],Rr=HL[S.hs[S.hi+1]],st=S.hst,o=S.online?opp():null;
+  app.innerHTML=`<button class="back" data-a="menu">← Menü</button>
+  <div class="top"><div class="pl"><b>🔥 Streak</b><span id="st" class="${st==="ok"?"pop":""}">${S.score}</span></div><div class="pn">🏆 Rekord ${Math.max(hlRec(),S.score)}</div>${S.online?`<div class="pl r"><b>${esc(oppName())}</b><span id="os">${o?(o.presence.s||0):0}</span></div>`:""}</div>
+  <div class="hl"><div class="card pc">${av(L)}<h2>${esc(L[0])}</h2><div class="note">${esc(L[1])}</div><div class="val">${fmt(L[2])}</div></div>
+  <div class="vs">VS</div>
+  <div class="card pc ${st==="ok"?"pop":st==="bad"?"shake":""}">${av(Rr)}<h2>${esc(Rr[0])}</h2><div class="note">${esc(Rr[1])}</div><div class="val" id="rv">${st==="ask"?"???":fmt(Rr[2])}</div>${st!=="ask"?`<div class="fx">${st==="ok"?"✅":"❌"}</div>`:""}</div></div>
+  ${st==="ask"?`<p class="note">Ist der Marktwert von ${esc(Rr[0])} höher oder niedriger?</p><div class="g g2"><button class="o" data-a="hl" data-g="h">⬆️ Höher</button><button class="o" data-a="hl" data-g="l">⬇️ Niedriger</button></div>`:""}`;
+  if(st!=="ask")countUp(Rr[2]);
+}
+function hlGuess(g){
+  if(S.view!=="hl"||S.hst!=="ask")return;
+  const L=HL[S.hs[S.hi]],Rr=HL[S.hs[S.hi+1]],ok=(Rr[2]>L[2])===(g==="h");
+  S.hst=ok?"ok":"bad";
+  if(ok){S.score++;if(S.score>hlRec()){try{localStorage.setItem("fqrec",S.score)}catch(e){}}}
+  if(RM)RM.presence({s:S.score}).catch(()=>{});
+  paintHL();
+  const i=S.hi;
+  setTimeout(()=>{
+    if(S.view!=="hl"||S.hi!==i)return;
+    if(ok&&S.hi+2<S.hs.length){S.hi++;S.hst="ask";paintHL()}else hlEnd();
+  },ok?1500:2000);
+}
+function hlEnd(){S.view="result";if(RM)RM.presence({s:S.score,d:1}).catch(()=>{});paint()}
+const nrm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim();
+const hsh=s=>{let h=5381;for(const c of s)h=((h*33)^c.charCodeAt(0))>>>0;return h.toString(36)};
+const tg=()=>S.run.toString(36)+":";
+const oA=k=>{const o=opp(),a=(o&&o.presence[k])||[],t=tg();return a.map(x=>typeof x==="string"&&x.startsWith(t)?x.slice(t.length):null)};
+const tagged=a=>a.map(x=>x==null?null:tg()+x);
+function telScore(){const oh=oA("ta");let n=0;for(let r=0;r<S.th.length;r++)if(S.th[r]&&oh[r]&&S.th[r]===oh[r])n++;return n}
+function startTel(){S.tr=0;S.tt=[];S.th=[];S.tsub=false;S.trev=false;paintTel()}
+function telSubmit(){
+  if(S.view!=="tel"||S.tsub)return;
+  const el=document.getElementById("ti"),t=(el?el.value:"").trim().slice(0,30);
+  if(!t){if(el)el.focus();return}
+  S.tsub=true;S.tt[S.tr]=t;S.th[S.tr]=hsh(S.run+"|"+S.tr+"|"+nrm(t));
+  if(RM)RM.presence({ta:tagged(S.th)}).catch(()=>{});
+  paintTel();telCheck();
+}
+function telCheck(){
+  if(S.view!=="tel")return;
+  const oh=oA("ta"),r=S.tr;
+  if(S.tsub&&!S.trev&&oh[r]){
+    S.trev=true;
+    if(RM)RM.presence({tt:tagged(S.tt)}).catch(()=>{});
+    paintTel();
+    setTimeout(()=>{if(S.view==="tel"&&S.tr===r)telNext()},5000);
+    return;
+  }
+  if(S.trev){paintTel();return}
+  const w=document.getElementById("tw");
+  if(w)w.textContent=oh[r]?"Dein Freund hat geantwortet ✓":(S.tsub?"Warte auf "+oppName()+" …":"");
+  const s=document.getElementById("ts");if(s)s.textContent=telScore();
+}
+function telNext(){
+  S.tr++;
+  if(S.tr>=S.qs.length){
+    S.score=telScore();S.view="result";
+    if(RM)RM.presence({s:S.score,d:1}).catch(()=>{});
+    paint();return;
+  }
+  S.tsub=false;S.trev=false;paintTel();
+}
+function paintTel(){
+  const r=S.tr,q=S.qs[r],oh=oA("ta"),ot=oA("tt"),o=opp();
+  let body;
+  if(S.trev){
+    const same=S.th[r]===oh[r],th=ot[r];
+    body=`<div class="big">${same?"🧠":"🙈"}</div><h2 style="text-align:center">${same?"Gleiche Antwort! +1":"Verschieden"}</h2><div class="g g2"><div class="o ${same?"ok":"dim"}">Du<br>${esc(S.tt[r])}</div><div class="o ${same?"ok":"dim"}">${esc(oppName())}<br>${th?esc(th):"…"}</div></div>`;
+  }else{
+    body=`<input id="ti" maxlength="30" placeholder="Deine Antwort" autocomplete="off" value="${esc(S.tsub?S.tt[r]:"")}"${S.tsub?" disabled":""}><button class="btn" data-a="tsend"${S.tsub?" disabled":""}>Antwort einreichen</button><div id="tw" class="note">${S.tsub?(oh[r]?"Dein Freund hat geantwortet ✓":"Warte auf "+esc(oppName())+" …"):(oh[r]?"Dein Freund hat schon geantwortet ✓":"")}</div>`;
+  }
+  app.innerHTML=`<button class="back" data-a="menu">← Menü</button><div class="top"><div class="pl"><b>🧠 Treffer</b><span id="ts">${telScore()}</span></div><div class="pn">Frage ${r+1}/${S.qs.length}</div><div class="pl r"><b>${esc(oppName())}</b><span>${o?"🟢":"⚪"}</span></div></div><div class="card"><div class="tag">Beide müssen dasselbe schreiben</div><h2>${esc(q)}</h2>${body}</div>`;
+  const i=document.getElementById("ti");if(i&&!S.tsub)i.focus();
+}
+function podiumAnim(){
+  document.querySelectorAll(".cnt").forEach(e=>{const v=+e.dataset.v,t0=performance.now();const f=t=>{const k=Math.min(1,(t-t0)/1200);e.textContent=Math.round(v*k);if(k<1&&e.isConnected)requestAnimationFrame(f)};requestAnimationFrame(f)});
+}
+function podium(){
+  const o=S.online?opp():null,u=S.mode==="h"?"Streak":S.mode==="g"?"Treffer":S.mode==="j"?"Richtige":"Punkte";
+  if(o&&o.presence.d!==1)return `<div class="big">⏳</div><h1>${esc(oppName())} spielt noch …</h1><div class="card" style="text-align:center"><div class="tag">Dein Ergebnis</div><h2>${S.score} ${u}</h2></div><button class="btn alt" data-a="menu">Zum Menü</button>`;
+  const pl=[{n:S.name||"Du",a:ball(AVC[S.av]||AVC[0]),s:S.score}];
+  if(o)pl.push({n:oppName(),a:oppAv(),s:o.presence.s||0});
+  pl.sort((x,y)=>y.s-x.s);
+  const tie=pl.length>1&&pl[0].s===pl[1].s;
+  const col=(p,h,w)=>`<div class="pcol"><div class="pav">${p.a}</div><div class="pnm">${esc(p.n)}</div>${w?'<div class="trophy">🏆</div>':'<div style="height:48px"></div>'}<div class="step${w?" g":""}" style="height:${h}px"><b class="cnt" data-v="${p.s}">0</b><small>${u}</small></div></div>`;
+  let row,title;
+  if(pl.length===1){row=col(pl[0],150,1);title="Starke Runde!"}
+  else if(tie){row=col(pl[0],150,1)+col(pl[1],150,1);title="Unentschieden!"}
+  else{row=col(pl[1],105,0)+col(pl[0],150,1)+'<div class="pcol"><div class="step e" style="height:70px"></div></div>';title=esc(pl[0].n)+" gewinnt!"}
+  if(S.mode==="g")title="Team-Ergebnis: "+S.score+" von "+S.qs.length+" Treffern";
+  const cf=Array.from({length:14},(_,i)=>`<i class="cf" style="left:${4+i*7}%;animation-delay:${(i%5)*.3+1.1}s">${["🎉","✨","⭐","🎊"][i%4]}</i>`).join("");
+  return `<div class="pod">${cf}<h1>${title}</h1><div class="prow">${row}</div></div>${!S.online||S.host?'<button class="btn" data-a="again">Nochmal spielen</button>':'<p class="note">Der Host startet die nächste Runde.</p>'}<button class="btn alt" data-a="menu">Zum Menü</button>`;
+}
+function hostStart(){
+  const go=Date.now(),seed=go%100000;
+  if(RM)RM.presence({go,mode:S.mode,seed}).catch(()=>{});
+  startGame(S.mode,seed,go);
+}
+
+function syncStart(){
+  if(!S.online||S.host)return;
+  const h=hostPeer();
+  if(h&&h.presence.go&&h.presence.go!==S.run)startGame(h.presence.mode||"x",h.presence.seed||1,h.presence.go);
+}
+
+function onPeers(){
+  if(!S.online)return;
+  syncStart();
+  if(S.view==="lobby"||S.view==="result")paint();
+  else if(S.view==="game"){paintScores();checkReveal()}else if(S.view==="pen"){paintPen();penCheck()}else if(S.view==="hl"){const e=document.getElementById("os"),o=opp();if(e)e.textContent=o?(o.presence.s||0):0}else if(S.view==="tel")telCheck();
+}
+
+const newCode=()=>{const c="abcdefghjkmnpqrstuvwxyz23456789";let k="";for(let i=0;i<4;i++)k+=c[Math.floor(Math.random()*c.length)];return k};
+async function enter(code,host){
+  if(!R)return;
+  S.err="";
+  for(let i=0;;i++){
+    try{RM=await R.join("fq"+code,host);break}
+    catch(e){
+      if(host&&e.message==="taken"&&i<5){code=newCode();continue}
+      S.err="Raum nicht erreichbar ("+e.message+"). Versuch es nochmal.";paint();return;
+    }
+  }
+  S.online=true;S.host=host;S.code=code;S.run=0;
+  RM.onPeers(onPeers);
+  RM.presence({n:S.name||"Spieler",v:S.av,h:host?1:0,mode:S.mode,s:0,a:[],d:0}).catch(()=>{});
+  S.view="lobby";paint();
+}
+
+async function menu(){
+  clearInterval(tm);
+  if(RM){try{await RM.leave()}catch(e){}}
+  RM=null;S.online=false;S.host=false;S.view="home";S.err="";paint();
+}
+
+app.addEventListener("click",e=>{
+  const b=e.target.closest("[data-a]");if(!b)return;
+  const a=b.dataset.a;
+  if(a==="mode"){S.mode=b.dataset.m;if(RM&&S.host)RM.presence({mode:S.mode}).catch(()=>{});paint()}
+  else if(a==="solo"){if(S.mode==="g"){S.err="Telepathie geht nur im Online-Duell.";paint();return}S.online=false;startGame(S.mode,Date.now()%100000,0)}
+  else if(a==="create")enter(newCode(),true)
+  else if(a==="join"){const k=S.codeIn.trim().toLowerCase();if(!/^[a-z0-9]{4}$/.test(k)){S.err="Bitte den 4-stelligen Code eingeben.";paint();return}enter(k,false)}
+  else if(a==="start")hostStart();
+  else if(a==="again"){if(S.online)hostStart();else startGame(S.mode,Date.now()%100000,0)}
+  else if(a==="menu")menu();
+  else if(a==="opt")choose(+b.dataset.i);else if(a==="pen")penPick(+b.dataset.i);else if(a==="hl")hlGuess(b.dataset.g);else if(a==="tsend")telSubmit();else if(a==="av"){S.av=+b.dataset.i;try{localStorage.setItem("fqav",S.av)}catch(x){}paint()}
+});
+app.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="ti")telSubmit()});
+app.addEventListener("input",e=>{
+  if(e.target.id==="nm"){S.name=e.target.value.slice(0,14);try{localStorage.setItem("fqn",S.name)}catch(x){}}
+  if(e.target.id==="cd")S.codeIn=e.target.value;
+});
+paint();
+</script>
+</body>
+</html>
